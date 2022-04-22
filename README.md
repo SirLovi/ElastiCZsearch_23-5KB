@@ -18,3 +18,20 @@ Zprovozněte Elasticsearch (pro český jazyk).
   * Instalace platformy
   * Prvotní konfigurace
   * Ukázky spojení
+
+### Doporučené zdroje:
+
+* https://reactjs.org/
+* https://graphql.org/
+* https://fastapi.tiangolo.com/advanced/graphql/
+* https://realpython.com/documenting-python-code/
+* https://github.com/hrbolek/_uois
+* https://docs.docker.com/compose/
+* https://www.python.org/
+* https://hbase.apache.org/
+* https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+* https://redis.io/
+* https://couchdb.apache.org/
+* https://www.mongodb.com/
+* https://neo4j.com/docs/
+* https://www.cockroachlabs.com/docs/stable/start-a-local-cluster-in-docker-mac.html
