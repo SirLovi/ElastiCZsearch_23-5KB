@@ -1,0 +1,78 @@
+version: "3.4"
+
+services:
+
+  setup:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.0
+    volumes:
+      - ./certs:/usr/share/elasticsearch/config/certs
+    user: "0"
+    command: >
+      bash -c '
+        printenv
+        
+        echo "Creating CA";
+        bin/elasticsearch-certutil ca --silent --pem -out config/certs/ca.zip;
+        unzip config/certs/ca.zip -d config/certs;
+
+        echo "Creating certs";
+        echo -ne \
+        "instances:\n"\
+        "  - name: es01\n"\
+        "    dns:\n"\
+        "      - es01\n"\
+        "      - localhost\n"\
+        "    ip:\n"\
+        "      - 127.0.0.1\n"\
+        > config/certs/instances.yml;
+        bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key;
+        unzip config/certs/certs.zip -d config/certs;
+ 
+        echo "Setting file permissions 1"
+        chown -R root:root config/certs;
+        echo "Setting file permissions 2"
+        find . -type d -exec chmod 750 \{\} \;;
+        echo "Setting file permissions 3"
+        find . -type f -exec chmod 640 \{\} \;;
+      '
+
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.0
+    ports:
+      - 9200:9200
+    environment:
+      - ELASTIC_PASSWORD=example
+      - KIBANA_PASSWORD=example
+
+      - node.name=es01
+      - cluster.initial_master_nodes=es01
+      - xpack.security.enabled=false
+
+    volumes:
+      - ./certs:/usr/share/elasticsearch/config/certs
+      - ./esdata01:/usr/share/elasticsearch/data
+
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.2.0
+    volumes:
+      - ./certs:/usr/share/kibana/config/certs
+    ports:
+      - 5601:5601
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=http://es01:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=example
