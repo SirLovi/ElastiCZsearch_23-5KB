@@ -1,13 +1,6 @@
 # ElastiCZsearch_23-5KB
 Zprovozněte Elasticsearch (pro český jazyk).
 
-## Run this in your WSL before starting the Elasticsearch container:
-
-```
-sudo sysctl -w vm.max_map_count=262144
-```
-This configuration is reset everytime after reboot.
-
 ## Časový harmonogram:
 * 29.3.2022 zveřejnění harmonogramu prací na projektu,
 * 7.4.2022 projektový den
