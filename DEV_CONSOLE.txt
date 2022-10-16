@@ -1,0 +1,156 @@
+##############################################
+GET _search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+GET products/_settings
+
+GET _cat/health?v  
+GET _cat/indices?v  
+
+DELETE products
+
+PUT products  
+{
+  "settings": {
+    "number_of_shards": "1",
+    "number_of_replicas": "0",
+    "analysis": {
+      "analyzer": {
+        "czech_hunspell_stopwords": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "min_length",
+            "czech_stop",
+            "czech_hunspell",
+            "lowercase",
+            "czech_stop",
+            "icu_folding",
+            "unique_on_same_position"
+          ]
+        },
+        "czech_hunspell": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "czech_hunspell",
+            "lowercase",
+            "icu_folding",
+            "unique_on_same_position"
+          ]
+        },
+        "czech_lowercase": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "icu_folding"
+          ]
+        },
+        "czech_shingle": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "shingle",
+            "lowercase",
+            "icu_folding",
+            "unique_on_same_position"
+          ]
+        }
+      },
+      "filter": {
+        "czech_hunspell": {
+          "type": "hunspell",
+          "locale": "cs_CZ"
+        },
+        "shingle": {
+          "type": "shingle",
+          "max_shingle_size": 2,
+          "min_shingle_size": 2
+        },
+        "czech_stop": {
+          "type": "stop",
+          "stopwords": [
+            "že",
+            "_czech_"
+          ]
+        },
+        "unique_on_same_position": {
+          "type": "unique",
+          "only_on_same_position": true
+        },
+        "min_length": {
+          "type": "length",
+          "min": 2
+        }
+      }
+    }
+  },
+  "mappings": {
+    "products": {
+      "properties": {
+        "title": {
+          "type": "keyword",
+          "fields": {
+            "czech_hunspell": {
+              "type": "text",
+              "analyzer": "czech_hunspell"
+            },
+            "czech_lowercase": {
+              "type": "text",
+              "analyzer": "czech_lowercase"
+            },
+            "czech_shingle": {
+              "type": "text",
+              "analyzer": "czech_shingle"
+            }
+          }
+        },
+        "description": {
+          "type": "text",
+          "analyzer": "czech_hunspell_stopwords"
+        }
+      }
+    }
+  }
+}
+
+
+
+
+POST _bulk  
+{"index": {"_index": "products", "_type": "products", "_id": "1"}}
+{"title": "Jablka golden 1 ks", "description": "Veškeré ovoce je prémiové kvality"}
+{"index": {"_index": "products", "_type": "products", "_id": "2"}}
+{"title": "Jablko idared", "description": "Kvalitní a čerstvé ovoce"}
+{"index": {"_index": "products", "_type": "products", "_id": "3"}}
+{"title": "Müsli", "description": "Křupavé müsli s jablky"}
+
+
+
+
+
+GET products/_search  
+{
+  "query": {
+    "multi_match": {
+      "query": "jablko", 
+      "fields": [
+        "title.czech_lowercase^2",
+        "title.czech_hunspell",
+        "title.czech_shingle^0.1",
+        "description^0.3"
+      ]
+    }
+  }
+}
+
+GET products/_analyze  
+{
+  "analyzer": "czech_shingle",
+  "text": "Veškeré ovoce je prémiové kvality"
+}

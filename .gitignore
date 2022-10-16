@@ -26,3 +26,11 @@ hs_err_pid*
 certs
 esdata01
 esdatadir
+LOGFILE_*
+
+.DS_Store
+/.idea
+#/elasticsearch-*
+#/kibana-*
+#/cerebro-*
+/logs
