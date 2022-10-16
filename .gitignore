@@ -30,7 +30,7 @@ LOGFILE_*
 
 .DS_Store
 /.idea
-#/elasticsearch-*
-#/kibana-*
-#/cerebro-*
+/elasticsearch-*
+/kibana-*
+/cerebro-*
 /logs
