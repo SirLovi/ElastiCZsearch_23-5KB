@@ -27,7 +27,7 @@ certs
 esdata01
 esdatadir
 LOGFILE_*
-cerebro.db
+*.db
 
 .DS_Store
 /.idea
