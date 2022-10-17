@@ -3,6 +3,8 @@
 # cleanup old files and dirs
 rm -rf elasticsearch-* kibana-* cerebro-*
 
+# add wget to git bash
+cp wget.exe "C:/Program Files/Git/mingw64/bin/"
 
 # === Elasticsearch ===
 
@@ -18,15 +20,15 @@ cp elasticsearch.yml elasticsearch-6.2.3/config/
 cp -r hunspell elasticsearch-6.2.3/config/
 
 # install ICU plugin
-elasticsearch-6.2.3/bin/elasticsearch-plugin install analysis-icu
+elasticsearch-6.2.3/bin/elasticsearch-plugin.bat install analysis-icu
 
 
 # === Kibana ===
 
 # download end extract
-wget https://artifacts.elastic.co/downloads/kibana/kibana-6.2.3-windows-x86_64.tar.gz
-tar xzf kibana-6.2.3-windows-x86_64.tar.gz
-rm -f kibana-6.2.3-windows-x86_64.tar.gz
+wget https://artifacts.elastic.co/downloads/kibana/kibana-6.2.3-windows-x86_64.zip
+unzip kibana-6.2.3-windows-x86_64.zip
+rm kibana-6.2.3-windows-x86_64.zip
 
 
 # === Cerebro ===
